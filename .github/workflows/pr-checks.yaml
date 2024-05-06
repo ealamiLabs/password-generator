@@ -1,4 +1,4 @@
-name: Tests with coverage
+name: PR style and unit tests (with coverage)
 on:
   pull_request:
     branches: [main]
