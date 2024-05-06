@@ -109,6 +109,7 @@ test('OfflinePasswordGenerator.generate', () => {
     },
   ]);
   expect(generator.generate(3)).toMatch(/[a-z]+/);
+  expect(generator.generate()).toMatch(/[a-z]+/);
   expect(generator.generate(3, '-')).toMatch(/[a-z]+-[a-z]+-[a-z]+/);
 
   const longPassword = generator.generate(3000, '', true);
