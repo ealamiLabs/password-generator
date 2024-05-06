@@ -5,52 +5,125 @@ const localDictionary = JSON.parse(
   fs.readFileSync(path.join(__dirname, 'words.json'), 'utf8')
 );
 
+/** A word object that contains the word, its length, and the number of unique characters.
+ *
+ * @property word - The word.
+ * @property length - The length of the word.
+ * @property uniqueCharacters - The number of unique characters in the word.
+ */
 export interface Word {
   word: string;
   length: number;
   uniqueCharacters: number;
 }
 
+/** An offline password generator that generates passwords based on a dictionary of words. */
 export interface OfflinePasswordGenerator {
-  dictionary: Word[];
-
+  /** Returns currently used dictionary.
+   *
+   * @returns The current dictionary.
+   */
   getDictionary(): Word[];
 
+  /** Sets the dictionary to the given array of words. Each object should have the following properties:
+   * - `word` (string): The word.
+   * - `length` (number): The length of the word.
+   * - `uniqueCharacters` (number): The number of unique characters in the word.
+   *
+   * @param dictionary - The dictionary to set.
+   */
   setDictionary(dictionary: Word[]): void;
 
-  addWord(word: Word): void;
+  /** Sets the dictionary to the given array of words. Each string will be converted into a Word object and values for
+   * `length` and `uniqueCharacters` will be calculated.
+   *
+   * @param words - The words to set.
+   */
+  setWords(words: string[]): void;
 
-  removeWord(word: Word): void;
+  /** Adds a word to the dictionary. The string will be converted into a Word object and values for `length` and
+   * `uniqueCharacters` will be calculated.
+   *
+   * @param word - The word to add.
+   */
+  addWord(word: string): void;
 
+  /** Adds all words from the given array to the dictionary. Each string will be converted into a Word object and values
+   * for `length` and `uniqueCharacters` will be calculated.
+   *
+   * @param words - The words to add.
+   */
+  addWords(words: string[]): void;
+
+  /** Removes a word from the dictionary.
+   *
+   * @param word - The word to remove.
+   */
+  removeWord(word: string): void;
+
+  /** Removes all words from the given array from the dictionary.
+   *
+   * @param words - The words to remove.
+   */
+  removeWords(words: string[]): void;
+
+  /** Checks if a word is present in the dictionary.
+   *
+   * @param word - The word to check.
+   * @returns `true` if the word is present in the dictionary, `false` otherwise.
+   */
   isPresent(word: string): boolean;
 
-  generate(length: number): string;
+  /** Generates a random password that consists of `length` words from the dictionary. Optionally, each word can be
+   * separated by a `separator` and some characters can be randomly swapped for symbols.
+   *
+   * If `randomSymbolSwap` is `true`, the following swaps will be made:
+   * - `a` -> `@` or `4` (50% chance each)
+   * - `e` -> `3`
+   * - `i` -> `!`
+   * - `s` -> `$` or `5` (50% chance each)
+   *
+   * The probability of a character being swapped is 20%.
+   *
+   * @param length - The number of words to generate.
+   * @param separator - The separator to use between words.
+   * @param randomSymbolSwap - Whether to randomly swap some characters for symbols.
+   * */
+  generate(
+    length: number,
+    separator?: string,
+    randomSymbolSwap?: boolean
+  ): string;
 }
 
+/** An offline password generator that generates passwords based on a dictionary of words.
+ *
+ * @param dictionary - The initial dictionary to use.
+ */
 export function OfflinePasswordGenerator(dictionary: Word[] = localDictionary) {
-  this.dictionary = dictionary;
+  let localDict = dictionary;
   this.getDictionary = function (): Word[] {
-    return this.dictionary;
+    return localDict;
   };
   this.setDictionary = function (dictionary: Word[]): void {
-    this.dictionary = dictionary;
+    localDict = dictionary;
   };
   this.setWords = function (words: string[]): void {
-    this.dictionary = words.map((word: string) => ({
+    localDict = words.map((word: string) => ({
       word,
       length: word.length,
       uniqueCharacters: new Set(word.split('')).size,
     }));
   };
   this.addWord = function (word: string): void {
-    this.dictionary.push({
+    localDict.push({
       word,
       length: word.length,
       uniqueCharacters: new Set(word.split('')).size,
     });
   };
   this.addWords = function (words: string[]): void {
-    this.dictionary.push(
+    localDict.push(
       ...words.map((word: string) => ({
         word,
         length: word.length,
@@ -59,15 +132,13 @@ export function OfflinePasswordGenerator(dictionary: Word[] = localDictionary) {
     );
   };
   this.removeWord = function (word: string): void {
-    this.dictionary = this.dictionary.filter((w: Word) => w.word !== word);
+    localDict = localDict.filter((w: Word) => w.word !== word);
   };
   this.removeWords = function (words: string[]): void {
-    this.dictionary = this.dictionary.filter(
-      (w: Word) => !words.includes(w.word)
-    );
+    localDict = localDict.filter((w: Word) => !words.includes(w.word));
   };
   this.isPresent = function (word: string): boolean {
-    return this.dictionary.find((w: Word) => w.word === word) !== undefined;
+    return localDict.find((w: Word) => w.word === word) !== undefined;
   };
   this.generate = function (
     wordCount: number = 3,
@@ -79,9 +150,9 @@ export function OfflinePasswordGenerator(dictionary: Word[] = localDictionary) {
     let password = '';
 
     for (let i = 0; i < wordCount; i++) {
-      const randomIndex = Math.floor(Math.random() * this.dictionary.length);
+      const randomIndex = Math.floor(Math.random() * localDict.length);
 
-      let randomWord = this.dictionary[randomIndex].word;
+      let randomWord = localDict[randomIndex].word;
 
       if (separator && i < wordCount - 1) {
         randomWord += separator;
@@ -94,6 +165,14 @@ export function OfflinePasswordGenerator(dictionary: Word[] = localDictionary) {
   };
 }
 
+/** Swaps some characters in a word for symbols.
+ * - `a` -> `@` or `4` (50% chance each)
+ * - `e` -> `3`
+ * - `i` -> `!`
+ * - `s` -> `$` or `5` (50% chance each)
+ *
+ * @param word - The word to swap characters in.
+ */
 function swapSymbols(word: string): string {
   let newWord = '';
 
