@@ -51,6 +51,6 @@
   "pre-commit": [
     "lint",
     "prettier:check",
-    "test"
+    "test:coverage"
   ]
 }
