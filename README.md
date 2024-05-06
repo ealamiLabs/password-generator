@@ -5,6 +5,10 @@
 [![npm version](https://badge.fury.io/js/@ealamilabs%2Fpassword-generator.svg)](https://badge.fury.io/js/@ealamilabs%2Fpassword-generator)
 [![CI](https://github.com/ealamiLabs/password-generator/actions/workflows/test.yaml/badge.svg?branch=main)](https://github.com/ealamiLabs/password-generator/actions/workflows/test.yaml)
 [![Commit Activity](https://img.shields.io/github/commit-activity/m/ealamiLabs/password-generator)](https://github.com/ealamiLabs/password-generator/pulse)
+[![Known Vulnerabilities](https://snyk.io/test/github/ealamiLabs/password-generator/badge.svg)](https://snyk.io/test/github/ealamiLabs/password-generator)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ealamiLabs_password-generator&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=ealamiLabs_password-generator)
+[![Twitter](https://img.shields.io/twitter/url/https/x.com/cloudposse.svg?style=social&label=Follow%20%40ealamiLabs)](https://x.com/ealamiLabs)
+![License](https://img.shields.io/github/license/ealamiLabs/password-generator)
 
 `@ealamilabs/password-generator` is a simple password generator library that can be used to generate random passwords. The library allows you to use existing dictionary [10,000+ most common English words](https://github.com/ealamiLabs/words) or feed your own dictionary (or even list of words) and generate a random password based on some parameters provided.
 
