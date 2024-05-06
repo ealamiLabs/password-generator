@@ -1,1 +1,1 @@
-export { OfflinePasswordGenerator } from './password-generator';
+export { OfflinePasswordGenerator, type Word } from './password-generator';
