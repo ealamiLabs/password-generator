@@ -1,6 +1,6 @@
 {
   "name": "@ealamilabs/password-generator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Dictionary based, easy-to-remember password generator.",
   "main": "dist/index.js",
   "scripts": {
