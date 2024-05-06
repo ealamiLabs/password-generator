@@ -35,6 +35,25 @@ export interface OfflinePasswordGenerator {
    */
   setDictionary(dictionary: Word[]): void;
 
+  /** Returns the minimum word length in the dictionary.
+   *
+   * @returns The minimum word length.
+   */
+  getMinWordLength(): number;
+
+  /** Returns the maximum word length in the dictionary.
+   *
+   * @returns The maximum word length.
+   */
+  getMaxWordLength(): number;
+
+  /** Returns a random word from the dictionary with the given length.
+   *
+   * @param length - The length of the word to get.
+   * @returns A random word with the given length.
+   */
+  getRandomWord(length: number): Word;
+
   /** Sets the dictionary to the given array of words. Each string will be converted into a Word object and values for
    * `length` and `uniqueCharacters` will be calculated.
    *
@@ -75,7 +94,7 @@ export interface OfflinePasswordGenerator {
    */
   isPresent(word: string): boolean;
 
-  /** Generates a random password that consists of `length` words from the dictionary. Optionally, each word can be
+  /** Generates a random password that consists of `wordCount` words from the dictionary. Optionally, each word can be
    * separated by a `separator` and some characters can be randomly swapped for symbols.
    *
    * If `randomSymbolSwap` is `true`, the following swaps will be made:
@@ -86,12 +105,12 @@ export interface OfflinePasswordGenerator {
    *
    * The probability of a character being swapped is 20%.
    *
-   * @param length - The number of words to generate.
+   * @param wordCount - The number of words to generate.
    * @param separator - The separator to use between words.
    * @param randomSymbolSwap - Whether to randomly swap some characters for symbols.
    * */
   generate(
-    length: number,
+    wordCount: number,
     separator?: string,
     randomSymbolSwap?: boolean
   ): string;
@@ -108,6 +127,21 @@ export function OfflinePasswordGenerator(dictionary: Word[] = localDictionary) {
   };
   this.setDictionary = function (dictionary: Word[]): void {
     localDict = dictionary;
+  };
+  this.getMinWordLength = function (): number {
+    return Math.min(...localDict.map((w: Word) => w.length));
+  };
+  this.getMaxWordLength = function (): number {
+    return Math.max(...localDict.map((w: Word) => w.length));
+  };
+  this.getRandomWord = function (length: number): Word {
+    const words = localDict.filter((w: Word) => w.length === length);
+
+    if (words.length === 0) {
+      throw new Error('No words with the given length');
+    }
+
+    return words[Math.floor(getRandomInteger(words.length))];
   };
   this.setWords = function (words: string[]): void {
     localDict = words.map((word: string) => ({

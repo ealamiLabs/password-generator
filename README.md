@@ -192,5 +192,4 @@ const randomPasssword = generator.generate(3, '-', true);
 - [ ] Add ability to set minimum and maximum password lengths
 - [ ] Add ability to set minimum and maximum word lengths
 - [ ] Add ability to set minimum and maximum unique characters in the word
-- [ ] Add ability to set minimum and maximum number of words in the password
 - [ ] Add ability to use online dictionary (e.g. provided from the [10,000+ most common English words](https://github.com/ealamiLabs/words))
