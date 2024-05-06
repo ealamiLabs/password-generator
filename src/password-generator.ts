@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import * as crypto from 'node:crypto';
 
 const localDictionary = JSON.parse(
   fs.readFileSync(path.join(__dirname, 'words.json'), 'utf8')
@@ -150,7 +151,7 @@ export function OfflinePasswordGenerator(dictionary: Word[] = localDictionary) {
     let password = '';
 
     for (let i = 0; i < wordCount; i++) {
-      const randomIndex = Math.floor(Math.random() * localDict.length);
+      const randomIndex = Math.floor(getRandomInteger(localDict.length));
 
       let randomWord = localDict[randomIndex].word;
 
@@ -177,10 +178,10 @@ function swapSymbols(word: string): string {
   let newWord = '';
 
   for (const char of word) {
-    if (Math.random() < 0.2) {
+    if (getRandomInteger(100) < 20) {
       switch (char) {
         case 'a':
-          newWord += Math.random() < 0.5 ? '@' : '4';
+          newWord += getRandomInteger(100) < 50 ? '@' : '4';
           break;
         case 'e':
           newWord += '3';
@@ -189,7 +190,7 @@ function swapSymbols(word: string): string {
           newWord += '!';
           break;
         case 's':
-          newWord += Math.random() < 0.5 ? '$' : '5';
+          newWord += getRandomInteger(100) < 50 ? '$' : '5';
           break;
         default:
           newWord += char;
@@ -200,4 +201,15 @@ function swapSymbols(word: string): string {
   }
 
   return newWord;
+}
+
+/** Generates a random integer number between 0 and `max`.
+ * Uses the `crypto` module to generate a random number and scales it to the desired range.
+ *
+ * @param max - The maximum number to generate.
+ */
+function getRandomInteger(max: number): number {
+  const random = crypto.randomBytes(32).readUInt32BE(0);
+
+  return Math.floor((random / 0xffffffff) * max);
 }
